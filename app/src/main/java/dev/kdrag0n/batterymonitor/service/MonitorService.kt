@@ -33,8 +33,9 @@ class MonitorService : Service() {
 
     companion object {
         fun start(context: Context) {
-            val serviceIntent = Intent(context, MonitorService::class.java)
-            ContextCompat.startForegroundService(context, serviceIntent)
+            Intent(context, MonitorService::class.java).also {
+                ContextCompat.startForegroundService(context, it)
+            }
         }
     }
 }
