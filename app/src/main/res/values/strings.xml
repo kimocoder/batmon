@@ -4,4 +4,7 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="monitor_service_description">Battery monitoring service.</string>
+    <string name="monitor_notification_title">Battery is being monitored</string>
+    <string name="monitor_notification_channel_name">Monitoring service</string>
+    <string name="monitor_notification_channel_description">This shows the current battery status while the monitoring service is active</string>
 </resources>
