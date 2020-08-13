@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import dev.kdrag0n.batterymonitor.R
 
 class HomeFragment : Fragment() {
@@ -20,7 +19,7 @@ class HomeFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_home)
+        val textView: TextView = root.findViewById(R.id.text_active_drain_label)
         homeViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
