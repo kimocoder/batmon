@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import dev.kdrag0n.batterymonitor.R
+import dev.kdrag0n.batterymonitor.service.MonitorService
 
 class DashboardFragment : Fragment() {
 
