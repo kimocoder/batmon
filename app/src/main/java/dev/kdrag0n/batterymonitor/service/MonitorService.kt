@@ -1,5 +1,6 @@
 package dev.kdrag0n.batterymonitor.service
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -45,19 +46,26 @@ class MonitorService : Service() {
         }
     }
 
-    private fun updateLastState(newScreenState: Boolean) {
+    private fun updateLastState(newScreenState: Boolean,
+                                newBatteryLevel: Double = getBatteryLevel(),
+                                newTime: Long = SystemClock.elapsedRealtimeNanos()) {
         lastScreenState = newScreenState
-        lastBatteryLevel = getBatteryLevel()
-        lastStateTime = SystemClock.elapsedRealtimeNanos()
+        lastBatteryLevel = newBatteryLevel
+        lastStateTime = newTime
 
         Timber.v("New state: screenOn=$newScreenState battery=$lastBatteryLevel time=$lastStateTime")
     }
 
+    @SuppressLint("TimberArgCount")
     private fun setState(newScreenState: Boolean) {
+        // Retrieve values first in case our accounting happens to drain 1% of battery
+        val newBatteryLevel = getBatteryLevel()
+        val newTime = SystemClock.elapsedRealtimeNanos()
+
         // This calculation is reversed to account for drain being negative
-        val drainedPct = lastBatteryLevel - getBatteryLevel()
-        val elapsedNs = SystemClock.elapsedRealtimeNanos() - lastStateTime
-        Timber.v("Blaming ${if (lastScreenState) "active" else "idle"} state for $drainedPct usage in $elapsedNs ns")
+        val drainedPct = lastBatteryLevel - newBatteryLevel
+        val elapsedNs = newTime - lastStateTime
+        Timber.v("Blaming ${if (lastScreenState) "active" else "idle"} state for $drainedPct% usage in $elapsedNs ns")
 
         val blamedUsage = if (lastScreenState) activeUsage else idleUsage
         blamedUsage.apply {
@@ -65,7 +73,7 @@ class MonitorService : Service() {
             timeNs += elapsedNs
         }
 
-        updateLastState(newScreenState)
+        updateLastState(newScreenState, newBatteryLevel, newTime)
     }
 
     private fun setupEventReceiver() {
