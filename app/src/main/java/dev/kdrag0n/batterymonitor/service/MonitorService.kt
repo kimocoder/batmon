@@ -15,7 +15,6 @@ import dev.kdrag0n.batterymonitor.data.BatteryUsageFraction
 import dev.kdrag0n.batterymonitor.ui.MainActivity
 import dev.kdrag0n.batterymonitor.utils.getBatteryLevel
 import timber.log.Timber
-import java.util.*
 
 private const val STATUS_NOTIFICATION_ID = 1
 private const val STATUS_CHANNEL_ID = "monitor_service_status_channel"
