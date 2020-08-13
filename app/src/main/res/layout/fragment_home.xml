@@ -23,13 +23,14 @@
 
             <TextView
                 android:id="@+id/text_active_drain_label"
-                android:textAppearance="?attr/textAppearanceBody2"
+                android:textAppearance="?attr/textAppearanceHeadline6"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/active_drain" />
 
             <TextView
                 android:id="@+id/text_active_drain_percent"
-                android:textAppearance="?attr/textAppearanceHeadline1"
+                android:textAppearance="?attr/textAppearanceHeadline4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

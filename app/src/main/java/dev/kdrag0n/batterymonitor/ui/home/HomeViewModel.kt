@@ -2,9 +2,8 @@ package dev.kdrag0n.batterymonitor.ui.home
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dev.kdrag0n.batterymonitor.data.BatteryUsageFraction
 
 class HomeViewModel : ViewModel() {
-    val text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
-    }
+    val activeUsage = MutableLiveData<BatteryUsageFraction>()
 }

@@ -1,10 +1,9 @@
 package dev.kdrag0n.batterymonitor.data
 
+import dev.kdrag0n.batterymonitor.utils.NS_PER_SEC
 import dev.kdrag0n.batterymonitor.utils.getDouble
 import dev.kdrag0n.batterymonitor.utils.put
 import net.grandcentrix.tray.AppPreferences
-
-private const val NS_PER_SEC = 1e9
 
 data class BatteryUsageFraction(var usage: Double = 0.0, var timeNs: Long = 0) {
     fun perHour(): Double {

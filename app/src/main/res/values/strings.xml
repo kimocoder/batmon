@@ -7,4 +7,14 @@
     <string name="monitor_notification_title">Battery is being monitored</string>
     <string name="monitor_notification_channel_name">Monitoring service</string>
     <string name="monitor_notification_channel_description">This shows the current battery status while the monitoring service is active</string>
+    <string name="active_drain">Active drain</string>
+    <string name="duration_format_days_hours">%1$dd %2$dh</string>
+    <string name="duration_format_hours_minutes">%1$dh %2$dm</string>
+    <string name="duration_format_minutes_seconds">%1$dm %2$ds</string>
+    <string name="duration_format_seconds">%1$d sec</string>
+    <string name="duration_format_milliseconds">%1$d ms</string>
+    <string name="duration_format_microseconds">%1$d µs</string>
+    <string name="duration_format_nanoseconds">%1$d ns</string>
+    <string name="in_duration">in %1$s</string>
+    <string name="percent_per_hour">%1$.3f%%/h</string>
 </resources>
