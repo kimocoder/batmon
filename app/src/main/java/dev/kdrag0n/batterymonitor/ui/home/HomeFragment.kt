@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import dev.kdrag0n.batterymonitor.R
 
 class HomeFragment : Fragment() {
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val model: HomeViewModel by viewModels()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -19,10 +19,11 @@ class HomeFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_active_drain_label)
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+
+        model.text.observe(viewLifecycleOwner, Observer {
+            root.findViewById<TextView>(R.id.text_active_drain_label).text = it
         })
+        
         return root
     }
 }
