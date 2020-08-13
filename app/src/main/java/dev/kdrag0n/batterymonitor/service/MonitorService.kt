@@ -2,10 +2,7 @@ package dev.kdrag0n.batterymonitor.service
 
 import android.annotation.SuppressLint
 import android.app.*
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -14,6 +11,7 @@ import dev.kdrag0n.batterymonitor.R
 import dev.kdrag0n.batterymonitor.data.BatteryUsageFraction
 import dev.kdrag0n.batterymonitor.ui.MainActivity
 import dev.kdrag0n.batterymonitor.utils.getBatteryLevel
+import net.grandcentrix.tray.AppPreferences
 import timber.log.Timber
 
 private const val STATUS_NOTIFICATION_ID = 1
@@ -23,13 +21,14 @@ class MonitorService : Service() {
     // Base service
     private var started = false
     private lateinit var receiver: EventReceiver
+    private lateinit var prefs: AppPreferences
 
     // Monitoring state
     private var lastScreenState = true
     private var lastBatteryLevel = -1.0
     private var lastStateTime = -1L
-    private val activeUsage = BatteryUsageFraction()
-    private val idleUsage = BatteryUsageFraction()
+    private lateinit var activeUsage: BatteryUsageFraction
+    private lateinit var idleUsage: BatteryUsageFraction
 
     private inner class EventReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -72,6 +71,8 @@ class MonitorService : Service() {
         }
 
         updateLastState(newScreenState, newBatteryLevel, newTime)
+        activeUsage.saveToTray(prefs, "active")
+        idleUsage.saveToTray(prefs, "idle")
     }
 
     private fun setupEventReceiver() {
@@ -129,6 +130,12 @@ class MonitorService : Service() {
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onCreate() {
+        prefs = AppPreferences(this)
+        activeUsage = BatteryUsageFraction.loadFromTray(prefs, "active")
+        idleUsage = BatteryUsageFraction.loadFromTray(prefs, "idle")
     }
 
     override fun onDestroy() {
