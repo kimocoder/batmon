@@ -64,7 +64,7 @@ class MonitorService : Service() {
         // This calculation is reversed to account for drain being negative
         val drainedPct = lastBatteryLevel - newBatteryLevel
         val elapsedNs = newTime - lastStateTime
-        Timber.v("Blaming ${if (lastScreenState) "active" else "idle"} state for $drainedPct% usage in $elapsedNs ns")
+        Timber.v("Blaming ${if (lastScreenState) "active" else "idle"} state for using $drainedPct% of battery in $elapsedNs ns")
 
         val blamedUsage = if (lastScreenState) activeUsage else idleUsage
         blamedUsage.apply {
