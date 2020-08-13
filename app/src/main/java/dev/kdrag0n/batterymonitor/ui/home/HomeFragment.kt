@@ -27,12 +27,22 @@ class HomeFragment : Fragment() {
         // TODO: load value asynchronously
         prefs = AppPreferences(context)
         model.activeUsage.postValue(BatteryUsageFraction.loadFromTray(prefs, "active"))
+        model.idleUsage.postValue(BatteryUsageFraction.loadFromTray(prefs, "idle"))
 
         model.activeUsage.observe(viewLifecycleOwner, Observer { frac ->
             val percentText = root.findViewById<TextView>(R.id.text_active_drain_percent)
             percentText.text = getString(R.string.percent_per_hour, frac.perHour())
 
             val timeText = root.findViewById<TextView>(R.id.text_active_drain_time)
+            val durationFormatted = context?.formatDurationNs(frac.timeNs)
+            timeText.text = getString(R.string.in_duration, durationFormatted)
+        })
+
+        model.idleUsage.observe(viewLifecycleOwner, Observer { frac ->
+            val percentText = root.findViewById<TextView>(R.id.text_idle_drain_percent)
+            percentText.text = getString(R.string.percent_per_hour, frac.perHour())
+
+            val timeText = root.findViewById<TextView>(R.id.text_idle_drain_time)
             val durationFormatted = context?.formatDurationNs(frac.timeNs)
             timeText.text = getString(R.string.in_duration, durationFormatted)
         })

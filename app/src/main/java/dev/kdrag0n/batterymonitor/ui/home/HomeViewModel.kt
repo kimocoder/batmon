@@ -6,4 +6,5 @@ import dev.kdrag0n.batterymonitor.data.BatteryUsageFraction
 
 class HomeViewModel : ViewModel() {
     val activeUsage = MutableLiveData<BatteryUsageFraction>()
+    val idleUsage = MutableLiveData<BatteryUsageFraction>()
 }

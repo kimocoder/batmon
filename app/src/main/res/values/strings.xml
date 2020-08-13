@@ -17,4 +17,5 @@
     <string name="duration_format_nanoseconds">%1$d ns</string>
     <string name="in_duration">in %1$s</string>
     <string name="percent_per_hour">%1$.3f%%/h</string>
+    <string name="idle_drain">Idle drain</string>
 </resources>
