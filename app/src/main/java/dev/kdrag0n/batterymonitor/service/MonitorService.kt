@@ -32,7 +32,6 @@ class MonitorService : Service() {
     private val idleUsage = BatteryUsageFraction()
 
     private inner class EventReceiver : BroadcastReceiver() {
-
         override fun onReceive(context: Context?, intent: Intent?) {
             Timber.d("Received intent: ${intent?.action}")
 
