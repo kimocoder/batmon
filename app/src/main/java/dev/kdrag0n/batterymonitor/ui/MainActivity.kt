@@ -11,7 +11,6 @@ import dev.kdrag0n.batterymonitor.R
 import dev.kdrag0n.batterymonitor.service.MonitorService
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

@@ -13,7 +13,6 @@ import dev.kdrag0n.batterymonitor.R
 import dev.kdrag0n.batterymonitor.service.MonitorService
 
 class DashboardFragment : Fragment() {
-
     private val dashboardViewModel: DashboardViewModel by viewModels()
 
     override fun onCreateView(

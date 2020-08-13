@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProviders
 import dev.kdrag0n.batterymonitor.R
 
 class NotificationsFragment : Fragment() {
-
     private val notificationsViewModel: NotificationsViewModel by viewModels()
 
     override fun onCreateView(

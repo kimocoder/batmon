@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProviders
 import dev.kdrag0n.batterymonitor.R
 
 class HomeFragment : Fragment() {
-
     private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
