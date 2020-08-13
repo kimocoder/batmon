@@ -1,8 +1,10 @@
 package dev.kdrag0n.batterymonitor.service
 
 import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -17,6 +19,25 @@ private const val STATUS_CHANNEL_ID = "monitor_service_status_channel"
 
 class MonitorService : Service() {
     private var started = false
+    private lateinit var receiver: EventReceiver
+
+    private inner class EventReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Timber.d("Received intent: ${intent?.action}")
+        }
+    }
+
+    private fun registerEventReceiver() {
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_SCREEN_ON)
+            addAction(Intent.ACTION_SCREEN_OFF)
+            addAction(Intent.ACTION_POWER_CONNECTED)
+            addAction(Intent.ACTION_POWER_DISCONNECTED)
+        }
+
+        receiver = EventReceiver()
+        registerReceiver(receiver, filter)
+    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -54,9 +75,14 @@ class MonitorService : Service() {
             Timber.d("Starting...")
             createNotificationChannel()
             showForegroundNotification()
+            registerEventReceiver()
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(receiver)
     }
 
     // Disallow binding since this service should run independently
