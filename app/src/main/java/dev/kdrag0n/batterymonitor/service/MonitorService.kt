@@ -5,37 +5,81 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
-import android.os.IBinder
+import android.os.*
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import dev.kdrag0n.batterymonitor.R
+import dev.kdrag0n.batterymonitor.data.BatteryUsageFraction
 import dev.kdrag0n.batterymonitor.ui.MainActivity
+import dev.kdrag0n.batterymonitor.utils.getBatteryLevel
 import timber.log.Timber
+import java.util.*
 
 private const val STATUS_NOTIFICATION_ID = 1
 private const val STATUS_CHANNEL_ID = "monitor_service_status_channel"
 
 class MonitorService : Service() {
+    // Base service
     private var started = false
     private lateinit var receiver: EventReceiver
 
+    // Monitoring state
+    private var lastScreenState = true
+    private var lastBatteryLevel = -1.0
+    private var lastStateTime = -1L
+    private val activeUsage = BatteryUsageFraction()
+    private val idleUsage = BatteryUsageFraction()
+
     private inner class EventReceiver : BroadcastReceiver() {
+
         override fun onReceive(context: Context?, intent: Intent?) {
             Timber.d("Received intent: ${intent?.action}")
+
+            when (intent?.action) {
+                Intent.ACTION_SCREEN_ON -> setState(true)
+                Intent.ACTION_SCREEN_OFF -> setState(false)
+            }
+
+            Timber.i("Usage stats: ${activeUsage.perHour()}%/h active, ${idleUsage.perHour()}%/h idle")
         }
     }
 
-    private fun registerEventReceiver() {
+    private fun updateLastState(newScreenState: Boolean) {
+        lastScreenState = newScreenState
+        lastBatteryLevel = getBatteryLevel()
+        lastStateTime = SystemClock.elapsedRealtimeNanos()
+
+        Timber.v("New state: screenOn=$newScreenState battery=$lastBatteryLevel time=$lastStateTime")
+    }
+
+    private fun setState(newScreenState: Boolean) {
+        // This calculation is reversed to account for drain being negative
+        val drainedPct = lastBatteryLevel - getBatteryLevel()
+        val elapsedNs = SystemClock.elapsedRealtimeNanos() - lastStateTime
+        Timber.v("Blaming ${if (lastScreenState) "active" else "idle"} state for $drainedPct usage in $elapsedNs ns")
+
+        val blamedUsage = if (lastScreenState) activeUsage else idleUsage
+        blamedUsage.apply {
+            usage += drainedPct
+            timeNs += elapsedNs
+        }
+
+        updateLastState(newScreenState)
+    }
+
+    private fun setupEventReceiver() {
+        // Create receiver and initialize state
+        receiver = EventReceiver()
+        updateLastState(getSystemService<PowerManager>()!!.isInteractive)
+
+        // Register the receiver now that initialization is finished
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_ON)
             addAction(Intent.ACTION_SCREEN_OFF)
             addAction(Intent.ACTION_POWER_CONNECTED)
             addAction(Intent.ACTION_POWER_DISCONNECTED)
         }
-
-        receiver = EventReceiver()
         registerReceiver(receiver, filter)
     }
 
@@ -75,7 +119,7 @@ class MonitorService : Service() {
             Timber.d("Starting...")
             createNotificationChannel()
             showForegroundNotification()
-            registerEventReceiver()
+            setupEventReceiver()
         }
 
         return super.onStartCommand(intent, flags, startId)
