@@ -5,6 +5,7 @@ import android.os.BatteryManager
 import androidx.core.content.getSystemService
 
 fun Context.getBatteryLevel(): Double {
+    checkRootAccess()
     val bm = getSystemService<BatteryManager>()
     return bm!!.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY).toDouble()
 }
