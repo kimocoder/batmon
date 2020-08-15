@@ -9,26 +9,35 @@ import timber.log.Timber
 import kotlin.math.roundToInt
 
 private val rawCapacityProps = arrayOf(
-    // Maxim MAX1720X companion PMIC on Pixel 3 (requires kernel patch)
+    /* OEM nodes */
+    // Maxim companion PMIC on Pixel 3/4 (requires kernel patch)
     PsyProperty("maxfg", "capacity_raw"),
-    // Battery Monitor System (fuel gauge) on Qualcomm Snapdragon PMICs
+
+    /* SoC nodes */
+    // Battery Monitor System (fuel gauge) on Qualcomm PMICs
     PsyProperty("bms", "capacity_raw"),
-    // Charging battery node (SMB) on Qualcomm Snapdragon PMICs
+    // Battery node (SMB charger) on Qualcomm PMICs
     PsyProperty("battery", "capacity_raw"),
     // Maxim PMIC on Samsung Exynos devices
     PsyProperty("battery", "batt_read_raw_soc")
 )
 
+// List of known max raw capacity values for rounding
 private val rawCapacityLimits = arrayOf(
+    // If some device happens to expose raw capacity as percentage
     100,
+    // Older Qualcomm PMICs (qpnp-fg-gen3 and older)
     255,
+    // Newer Qualcomm PMICs (qpnp-fg-gen4 and newer, qpnp-qg)
     10000,
+    // Maxim companion PMIC on Pixel 3/4
     25600,
+    // Newer Qualcomm PMICs (qpnp-fg-gen4 and newer) with a kernel patch to expose hardware value
     65535
 )
 
-// 5%
-private val rawCapacityMargin = 0.02
+// +-3% error margin for rounding to known limits
+private val rawCapacityLimitMargin = 0.03
 
 class BatteryReader(val context: Context) {
     // These are expensive to populate and should never change for the lifetime of this object
@@ -63,9 +72,22 @@ class BatteryReader(val context: Context) {
         val rawCapacity = rawCapacityProp?.read() ?: return 0
         val capacity = getLevelAndroid()
 
-        val newMax = (rawCapacity / (capacity / 100)).roundToInt()
-        Timber.d("Calculated max raw capacity: $newMax")
-        return newMax
+        val calcMax = (rawCapacity / (capacity / 100)).roundToInt()
+        Timber.d("Calculated max raw capacity: $calcMax")
+
+        for (exactMax in rawCapacityLimits) {
+            val compareMin = (exactMax * (1 - rawCapacityLimitMargin)).roundToInt()
+            val compareMax = (exactMax * (1 + rawCapacityLimitMargin)).roundToInt()
+
+            Timber.v("Comparing $calcMax with known exact value $exactMax: margin ${rawCapacityLimitMargin * 100}% -> min $compareMin, max $compareMax")
+            if (calcMax in compareMin..compareMax) {
+                Timber.d("Rounding to known exact value: $exactMax")
+                return exactMax
+            }
+        }
+
+        Timber.w("Unable to find close exact value, falling back to calculated max raw capacity")
+        return calcMax
     }
 
     private fun getLevelAndroid(): Double {
