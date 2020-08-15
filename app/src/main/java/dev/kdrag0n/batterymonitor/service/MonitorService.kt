@@ -10,7 +10,7 @@ import androidx.core.content.getSystemService
 import dev.kdrag0n.batterymonitor.R
 import dev.kdrag0n.batterymonitor.data.BatteryUsageFraction
 import dev.kdrag0n.batterymonitor.ui.MainActivity
-import dev.kdrag0n.batterymonitor.utils.getBatteryLevel
+import dev.kdrag0n.batterymonitor.utils.BatteryReader
 import net.grandcentrix.tray.AppPreferences
 import timber.log.Timber
 
@@ -22,6 +22,7 @@ class MonitorService : Service() {
     private var started = false
     private lateinit var receiver: EventReceiver
     private lateinit var prefs: AppPreferences
+    private val batteryReader = BatteryReader(this)
 
     // Monitoring state
     private var lastScreenState = true
@@ -44,7 +45,7 @@ class MonitorService : Service() {
     }
 
     private fun updateLastState(newScreenState: Boolean,
-                                newBatteryLevel: Double = getBatteryLevel(),
+                                newBatteryLevel: Double = batteryReader.getLevel(),
                                 newTime: Long = SystemClock.elapsedRealtimeNanos()) {
         lastScreenState = newScreenState
         lastBatteryLevel = newBatteryLevel
@@ -56,7 +57,7 @@ class MonitorService : Service() {
     @SuppressLint("TimberArgCount")
     private fun setState(newScreenState: Boolean) {
         // Retrieve values first in case our accounting happens to drain 1% of battery
-        val newBatteryLevel = getBatteryLevel()
+        val newBatteryLevel = batteryReader.getLevel()
         val newTime = SystemClock.elapsedRealtimeNanos()
 
         // This calculation is reversed to account for drain being negative
