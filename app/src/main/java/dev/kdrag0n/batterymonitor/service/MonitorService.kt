@@ -58,6 +58,13 @@ class MonitorService : Service() {
                     // We can't use the old ones or usage will become negative
                     initState()
                 }
+                Intent.ACTION_SHUTDOWN -> {
+                    if (!isPowered) {
+                        // Save what we have as there's no guarantee that nothing else has happened
+                        // since the last time we were up
+                        refreshState()
+                    }
+                }
             }
 
             Timber.i("Usage stats: ${activeUsage.perHour()}%/h active, ${idleUsage.perHour()}%/h idle")
@@ -127,6 +134,7 @@ class MonitorService : Service() {
             addAction(Intent.ACTION_SCREEN_OFF)
             addAction(Intent.ACTION_POWER_CONNECTED)
             addAction(Intent.ACTION_POWER_DISCONNECTED)
+            addAction(Intent.ACTION_SHUTDOWN)
         }
         registerReceiver(receiver, filter)
     }
