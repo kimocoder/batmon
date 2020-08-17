@@ -28,7 +28,7 @@ class MonitorService : Service() {
     private var lastScreenState = true
     private var lastBatteryLevel = -1.0
     private var lastStateTime = -1L
-    private var isCharging = false
+    private var isPowered = false
     private lateinit var activeUsage: BatteryUsageFraction
     private lateinit var idleUsage: BatteryUsageFraction
 
@@ -38,21 +38,21 @@ class MonitorService : Service() {
 
             when (intent?.action) {
                 Intent.ACTION_SCREEN_ON -> {
-                    if (!isCharging) {
+                    if (!isPowered) {
                         setState(true)
                     }
                 }
                 Intent.ACTION_SCREEN_OFF -> {
-                    if (!isCharging) {
+                    if (!isPowered) {
                         setState(false)
                     }
                 }
                 Intent.ACTION_POWER_CONNECTED -> {
-                    isCharging = true
+                    isPowered = true
                     refreshState()
                 }
                 Intent.ACTION_POWER_DISCONNECTED -> {
-                    isCharging = false
+                    isPowered = false
                     refreshState()
                     // Start tracking again with fresh values
                     // We can't use the old ones or usage will become negative
@@ -115,7 +115,7 @@ class MonitorService : Service() {
         // We can't save and restore these values because we can't find out what happened during
         // the downtime -- battery died? device crashed? battery was drained by another OS?
         initState()
-        isCharging = batteryReader.isPowerConnected()
+        isPowered = batteryReader.isPowerConnected()
 
         // Register the receiver now that initialization is finished
         val filter = IntentFilter().apply {
