@@ -81,6 +81,7 @@ class MonitorService : Service() {
     }
 
     private fun refreshState() {
+        // Setting the same state causes usage to be updated without causing a state change
         setState(lastScreenState)
     }
 
