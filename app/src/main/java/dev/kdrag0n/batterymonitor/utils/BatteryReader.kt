@@ -30,11 +30,11 @@ private val rawCapacityLimits = arrayOf(
     100,
     // Older Qualcomm PMICs (qpnp-fg-gen3 and older)
     255,
-    // Newer Qualcomm PMICs (qpnp-fg-gen4 and newer, qpnp-qg)
+    // Newer Qualcomm PMICs (qpnp-fg-gen4 and newer, qpnp-qg) with qcom,soc-hi-res DT property
     10000,
     // Maxim companion PMIC on Pixel 3/4
     25600,
-    // Newer Qualcomm PMICs (qpnp-fg-gen4 and newer) with a kernel patch to expose hardware value
+    // Qualcomm PMICs (qpnp-fg-gen3 and newer) with a kernel patch to expose hardware MSOC value
     65535
 )
 
