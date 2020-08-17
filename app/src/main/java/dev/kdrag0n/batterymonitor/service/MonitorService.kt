@@ -84,10 +84,14 @@ class MonitorService : Service() {
         val drainedPct = lastBatteryLevel - newBatteryLevel
         val elapsedNs = newTime - lastStateTime
 
-        val blamedUsage = if (lastScreenState) activeUsage else idleUsage
-        blamedUsage.apply {
-            usage += drainedPct
-            timeNs += elapsedNs
+        val blamedUsage = if (lastScreenState) {
+            val newUsage = activeUsage.add(drainedPct, elapsedNs)
+            activeUsage = newUsage
+            newUsage
+        } else {
+            val newUsage = idleUsage.add(drainedPct, elapsedNs)
+            idleUsage = newUsage
+            newUsage
         }
 
         Timber.v("Blamed ${if (lastScreenState) "active" else "idle"} state for using $drainedPct% of battery in $elapsedNs ns")

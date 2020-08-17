@@ -5,13 +5,17 @@ import dev.kdrag0n.batterymonitor.utils.getDouble
 import dev.kdrag0n.batterymonitor.utils.put
 import net.grandcentrix.tray.AppPreferences
 
-data class BatteryUsageFraction(var usage: Double = 0.0, var timeNs: Long = 0) {
+data class BatteryUsageFraction(val usage: Double = 0.0, val timeNs: Long = 0) {
     fun perHour(): Double {
         if (timeNs == 0L) {
             return 0.0
         }
 
         return usage / (timeNs / NS_PER_SEC / 60 / 60)
+    }
+
+    fun add(incUsage: Double, incTime: Long): BatteryUsageFraction {
+        return BatteryUsageFraction(usage + incUsage, timeNs + incTime)
     }
 
     fun saveToTray(prefs: AppPreferences, name: String) {
