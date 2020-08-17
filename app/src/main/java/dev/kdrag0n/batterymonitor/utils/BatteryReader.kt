@@ -1,6 +1,8 @@
 package dev.kdrag0n.batterymonitor.utils
 
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.BatteryManager
 import androidx.core.content.getSystemService
 import com.topjohnwu.superuser.Shell
@@ -112,6 +114,18 @@ class BatteryReader(val context: Context) {
         } catch (e: Exception) {
             Timber.e(e, "Failed to get raw battery level")
             getLevelAndroid()
+        }
+    }
+
+    fun isPowerConnected(): Boolean {
+        val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        val intent = context.registerReceiver(null, filter)
+
+        return when (intent?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1) {
+            BatteryManager.BATTERY_PLUGGED_AC -> true
+            BatteryManager.BATTERY_PLUGGED_USB -> true
+            BatteryManager.BATTERY_PLUGGED_WIRELESS -> true
+            else -> false
         }
     }
 }

@@ -28,6 +28,7 @@ class MonitorService : Service() {
     private var lastScreenState = true
     private var lastBatteryLevel = -1.0
     private var lastStateTime = -1L
+    private var isCharging = false
     private lateinit var activeUsage: BatteryUsageFraction
     private lateinit var idleUsage: BatteryUsageFraction
 
@@ -38,8 +39,17 @@ class MonitorService : Service() {
             when (intent?.action) {
                 Intent.ACTION_SCREEN_ON -> setState(true)
                 Intent.ACTION_SCREEN_OFF -> setState(false)
-                Intent.ACTION_POWER_CONNECTED -> refreshState()
-                Intent.ACTION_POWER_DISCONNECTED -> refreshState()
+                Intent.ACTION_POWER_CONNECTED -> {
+                    isCharging = true
+                    refreshState()
+                }
+                Intent.ACTION_POWER_DISCONNECTED -> {
+                    isCharging = false
+                    refreshState()
+                    // Start tracking again with fresh values
+                    // We can't use the old ones or usage will become negative
+                    initState()
+                }
             }
 
             Timber.i("Usage stats: ${activeUsage.perHour()}%/h active, ${idleUsage.perHour()}%/h idle")
@@ -85,10 +95,19 @@ class MonitorService : Service() {
         setState(lastScreenState)
     }
 
+    private fun initState() {
+        // Restart "last state" tracking after charging or service restart
+        updateLastState(getSystemService<PowerManager>()!!.isInteractive)
+    }
+
     private fun setupEventReceiver() {
         // Create receiver and initialize state
         receiver = EventReceiver()
-        updateLastState(getSystemService<PowerManager>()!!.isInteractive)
+        // Initialize last state tracking with fresh values
+        // We can't save and restore these values because we can't find out what happened during
+        // the downtime -- battery died? device crashed? battery was drained by another OS?
+        initState()
+        isCharging = batteryReader.isPowerConnected()
 
         // Register the receiver now that initialization is finished
         val filter = IntentFilter().apply {
