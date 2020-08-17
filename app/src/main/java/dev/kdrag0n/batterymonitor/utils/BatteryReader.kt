@@ -39,7 +39,7 @@ private val rawCapacityLimits = arrayOf(
 )
 
 // +-3% error margin for rounding to known limits
-private val rawCapacityLimitMargin = 0.03
+private const val rawCapacityLimitMargin = 0.03
 
 class BatteryReader(val context: Context) {
     // These are expensive to populate and should never change for the lifetime of this object
