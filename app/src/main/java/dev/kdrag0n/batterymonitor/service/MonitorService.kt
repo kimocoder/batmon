@@ -37,8 +37,16 @@ class MonitorService : Service() {
             Timber.d("Received intent: ${intent?.action}")
 
             when (intent?.action) {
-                Intent.ACTION_SCREEN_ON -> setState(true)
-                Intent.ACTION_SCREEN_OFF -> setState(false)
+                Intent.ACTION_SCREEN_ON -> {
+                    if (!isCharging) {
+                        setState(true)
+                    }
+                }
+                Intent.ACTION_SCREEN_OFF -> {
+                    if (!isCharging) {
+                        setState(false)
+                    }
+                }
                 Intent.ACTION_POWER_CONNECTED -> {
                     isCharging = true
                     refreshState()
