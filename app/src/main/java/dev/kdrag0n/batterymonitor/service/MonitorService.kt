@@ -38,6 +38,8 @@ class MonitorService : Service() {
             when (intent?.action) {
                 Intent.ACTION_SCREEN_ON -> setState(true)
                 Intent.ACTION_SCREEN_OFF -> setState(false)
+                Intent.ACTION_POWER_CONNECTED -> refreshState()
+                Intent.ACTION_POWER_DISCONNECTED -> refreshState()
             }
 
             Timber.i("Usage stats: ${activeUsage.perHour()}%/h active, ${idleUsage.perHour()}%/h idle")
@@ -76,6 +78,10 @@ class MonitorService : Service() {
         updateLastState(newScreenState, newBatteryLevel, newTime)
         activeUsage.saveToTray(prefs, "active")
         idleUsage.saveToTray(prefs, "idle")
+    }
+
+    private fun refreshState() {
+        setState(lastScreenState)
     }
 
     private fun setupEventReceiver() {
