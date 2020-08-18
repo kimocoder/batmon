@@ -8,7 +8,7 @@ import androidx.core.content.getSystemService
 import com.topjohnwu.superuser.Shell
 import dev.kdrag0n.batterymonitor.data.PsyProperty
 import timber.log.Timber
-import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 private val rawCapacityProps = arrayOf(
     /* OEM nodes */
@@ -27,15 +27,15 @@ private val rawCapacityProps = arrayOf(
 // List of known max raw capacity values for rounding
 private val rawCapacityLimits = arrayOf(
     // If some device happens to expose raw capacity as percentage
-    100,
+    100L,
     // Older Qualcomm PMICs (qpnp-fg-gen3 and older)
-    255,
+    255L,
     // Newer Qualcomm PMICs (qpnp-fg-gen4 and newer, qpnp-qg) with qcom,soc-hi-res DT property
-    10000,
+    10000L,
     // Maxim companion PMIC on Pixel 3/4
-    25600,
+    25600L,
     // Qualcomm PMICs (qpnp-fg-gen3 and newer) with a kernel patch to expose hardware MSOC value
-    65535
+    65535L
 )
 
 // +-3% error margin for rounding to known limits
@@ -47,7 +47,7 @@ class BatteryReader(val context: Context) {
         findRawCapacityProp()
     }
 
-    private val maxRawCapacity: Int by lazy {
+    private val maxRawCapacity: Long by lazy {
         findMaxRawCapacity()
     }
 
@@ -70,16 +70,16 @@ class BatteryReader(val context: Context) {
         return null
     }
 
-    private fun findMaxRawCapacity(): Int {
+    private fun findMaxRawCapacity(): Long {
         val rawCapacity = rawCapacityProp?.read() ?: return 0
         val capacity = getLevelAndroid()
 
-        val calcMax = (rawCapacity / (capacity / 100)).roundToInt()
+        val calcMax = (rawCapacity / (capacity / 100)).roundToLong()
         Timber.d("Calculated max raw capacity: $calcMax")
 
         for (exactMax in rawCapacityLimits) {
-            val compareMin = (exactMax * (1 - rawCapacityLimitMargin)).roundToInt()
-            val compareMax = (exactMax * (1 + rawCapacityLimitMargin)).roundToInt()
+            val compareMin = (exactMax * (1 - rawCapacityLimitMargin)).roundToLong()
+            val compareMax = (exactMax * (1 + rawCapacityLimitMargin)).roundToLong()
 
             Timber.v("Comparing $calcMax with known exact value $exactMax: margin ${rawCapacityLimitMargin * 100}% -> min $compareMin, max $compareMax")
             if (calcMax in compareMin..compareMax) {

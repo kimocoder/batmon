@@ -10,5 +10,5 @@ data class PsyProperty(val supply: String, val property: String) {
     }
 
     fun exists() = file.exists()
-    fun read() = file.readText().toInt()
+    fun read() = file.readText().toLong()
 }
