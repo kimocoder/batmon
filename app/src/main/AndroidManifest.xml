@@ -34,7 +34,7 @@
             android:name=".service.MonitorService"
             android:description="@string/monitor_service_description"
             android:exported="false"
-            android:process=":monitor_service" />
+            android:process=":service" />
 
     </application>
 
