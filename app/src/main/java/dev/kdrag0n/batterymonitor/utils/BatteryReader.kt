@@ -45,7 +45,7 @@ private val rawCapacityLimits = arrayOf(
     25600L,
     // Qualcomm PMICs (qpnp-fg-gen3 or newer) with kernel patch to expose hardware MSOC value
     65535L,
-    // Qualcomm PMICs (qpnp-fg-gen4 or newer) with kernel patch to expose raw CC_SOC value
+    // Qualcomm PMICs (qpnp-fg-gen4 or newer) with kernel patch to expose raw CC_SOC(_SW) value
     1073741823L,
     // Qualcomm PMICs (qpnp-fg-gen4 or newer) with kernel patch to expose raw BATT_SOC value
     4294967295L
