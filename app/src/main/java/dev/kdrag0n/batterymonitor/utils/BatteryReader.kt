@@ -17,6 +17,13 @@ private val rawCapacityProps = arrayOf(
 
     /* SoC nodes */
     // Battery Monitor System (fuel gauge) on Qualcomm PMICs
+    // BMS shadow charge counter (BATT_SOC)
+    PsyProperty("bms", "charge_counter_ext"),
+    // BMS charge counter, adjusted to MSoC after hitting 100% (CC_SOC_SW)
+    PsyProperty("bms", "cc_soc_sw"),
+    // BMS charge counter, raw battery charge value from hardware (CC_SOC)
+    PsyProperty("bms", "cc_soc"),
+    // BMS monotonic SoC, matches value shown in Android (MONOTONIC_SOC)
     PsyProperty("bms", "capacity_raw"),
     // Battery node (SMB charger) on Qualcomm PMICs
     PsyProperty("battery", "capacity_raw"),
@@ -28,14 +35,18 @@ private val rawCapacityProps = arrayOf(
 private val rawCapacityLimits = arrayOf(
     // If some device happens to expose raw capacity as percentage
     100L,
-    // Older Qualcomm PMICs (qpnp-fg-gen3 and older)
+    // Qualcomm PMICs with stock kernel
     255L,
-    // Newer Qualcomm PMICs (qpnp-fg-gen4 and newer, qpnp-qg) with qcom,soc-hi-res DT property
+    // Qualcomm PMICs (qpnp-fg-gen4 or newer, qpnp-qg) with qcom,soc-hi-res DT property
     10000L,
     // Maxim companion PMIC on Pixel 3/4
     25600L,
-    // Qualcomm PMICs (qpnp-fg-gen3 and newer) with a kernel patch to expose hardware MSOC value
-    65535L
+    // Qualcomm PMICs (qpnp-fg-gen3 or newer) with kernel patch to expose hardware MSOC value
+    65535L,
+    // Qualcomm PMICs (qpnp-fg-gen4 or newer) with kernel patch to expose raw CC_SOC value
+    1073741823L,
+    // Qualcomm PMICs (qpnp-fg-gen4 or newer) with kernel patch to expose raw BATT_SOC value
+    4294967295L
 )
 
 // +-3% error margin for rounding to known limits
