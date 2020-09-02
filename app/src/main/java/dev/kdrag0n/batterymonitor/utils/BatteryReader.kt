@@ -25,11 +25,11 @@ private val rawCapacityProps = arrayOf(
     PsyProperty("battery", "batt_read_raw_soc"),
 
     /* Experimental Qualcomm PMIC BMS nodes */
-    // BMS shadow charge counter (BATT_SOC)
+    // Shadow charge counter (BATT_SOC)
     PsyProperty("bms", "charge_counter_ext"),
-    // BMS charge counter, adjusted to MSoC after hitting 100% (CC_SOC_SW)
+    // Charge counter, adjusted to MSoC after hitting 100% (CC_SOC_SW)
     PsyProperty("bms", "cc_soc_sw"),
-    // BMS charge counter, raw battery charge value from hardware (CC_SOC)
+    // Charge counter, raw battery charge value from hardware (CC_SOC)
     PsyProperty("bms", "cc_soc")
 )
 
