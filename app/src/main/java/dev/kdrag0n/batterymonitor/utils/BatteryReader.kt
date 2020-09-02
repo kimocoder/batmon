@@ -10,25 +10,27 @@ import dev.kdrag0n.batterymonitor.data.PsyProperty
 import timber.log.Timber
 import kotlin.math.roundToLong
 
+// Power supply properties for raw capacity, sorted by order of preference
 private val rawCapacityProps = arrayOf(
     /* OEM nodes */
     // Maxim companion PMIC on Pixel 3/4 (requires kernel patch)
     PsyProperty("maxfg", "capacity_raw"),
 
-    /* SoC nodes */
-    // Battery Monitor System (fuel gauge) on Qualcomm PMICs
+    /* SoC vendor nodes */
+    // Qualcomm BMS monotonic SoC, matches value shown in Android (MONOTONIC_SOC)
+    PsyProperty("bms", "capacity_raw"),
+    // Battery node (SMB charger) on Qualcomm PMICs
+    PsyProperty("battery", "capacity_raw"),
+    // Maxim PMIC on Samsung Exynos devices
+    PsyProperty("battery", "batt_read_raw_soc"),
+
+    /* Experimental Qualcomm PMIC BMS nodes */
     // BMS shadow charge counter (BATT_SOC)
     PsyProperty("bms", "charge_counter_ext"),
     // BMS charge counter, adjusted to MSoC after hitting 100% (CC_SOC_SW)
     PsyProperty("bms", "cc_soc_sw"),
     // BMS charge counter, raw battery charge value from hardware (CC_SOC)
-    PsyProperty("bms", "cc_soc"),
-    // BMS monotonic SoC, matches value shown in Android (MONOTONIC_SOC)
-    PsyProperty("bms", "capacity_raw"),
-    // Battery node (SMB charger) on Qualcomm PMICs
-    PsyProperty("battery", "capacity_raw"),
-    // Maxim PMIC on Samsung Exynos devices
-    PsyProperty("battery", "batt_read_raw_soc")
+    PsyProperty("bms", "cc_soc")
 )
 
 // List of known max raw capacity values for rounding
