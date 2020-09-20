@@ -36,6 +36,15 @@
             android:exported="false"
             android:process=":service" />
 
+        <service
+            android:name=".service.ControlService"
+            android:label="@string/battery_monitor"
+            android:permission="android.permission.BIND_CONTROLS">
+            <intent-filter>
+                <action android:name="android.service.controls.ControlsProviderService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

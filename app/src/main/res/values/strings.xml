@@ -18,4 +18,11 @@
     <string name="in_duration">in %1$s</string>
     <string name="percent_per_hour">%1$.3f%%/h</string>
     <string name="idle_drain">Idle drain</string>
+    <string name="battery_monitor">Battery Monitor</string>
+    <string name="control_active_drain_title">Active drain</string>
+    <string name="control_idle_drain_title">Idle drain</string>
+    <string name="control_clear_title">Clear stats</string>
+    <string name="control_clear_subtitle">Tap to clear</string>
+    <string name="control_battery_title">Battery level</string>
+    <string name="control_battery_subtitle">%1$.4f%% precision</string>
 </resources>

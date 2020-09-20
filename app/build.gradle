@@ -48,6 +48,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
     implementation 'com.google.android.material:material:1.2.0'
+    implementation 'org.reactivestreams:reactive-streams:1.0.3'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'net.grandcentrix.tray:tray:0.12.0'
