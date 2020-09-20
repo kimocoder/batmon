@@ -1,9 +1,20 @@
 package dev.kdrag0n.batterymonitor.utils
 
 import android.content.Context
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import dev.kdrag0n.batterymonitor.R
 
 const val NS_PER_SEC = 1e9
+
+object TextUtils {
+    fun createColoredSpan(text: String, color: Int): SpannableString {
+        val styledText = SpannableString(text)
+        styledText.setSpan(ForegroundColorSpan(color), 0, text.length, 0)
+        return styledText
+    }
+}
 
 fun Context.formatDurationNs(ns: Long): String {
     val us = ns / 1000
